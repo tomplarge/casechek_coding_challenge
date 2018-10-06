@@ -95,7 +95,6 @@ def filter(resource, results, input_filters):
 	try:
 		filters = parse_filters(input_filters)
 
-
 		return resource.filter(results, filters)
 	except:
 		abort(400, "Filters in URL not formatted properly: {}".format(input_filters))

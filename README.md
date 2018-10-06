@@ -28,6 +28,10 @@ This REST API allows interaction with the `hospitals` database. By default, it r
 - `PUT /hospitals/<id>`: updates hospital entry corresponding to `id`
 - `DELETE /hospitals/<id>`: deletes hospital corresponding to `id`
 
+Filtering by field is supported for `GET` requests with the following syntax:
+
+`localhost:5000/<resource>?filter=field1=val1`
+
 To make a request using cURL, use the following template:
 ```
 curl -X [GET|POST|PUT|DELETE] [-d arg1=val1 -d arg2=val2 ...] localhost:5000/<resource>/<id> 

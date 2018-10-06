@@ -3,6 +3,7 @@ import app
 
 from attribute import Attribute
 from validations import length_equals
+from resources import Hospital
 from werkzeug.exceptions import HTTPException, NotFound
 
 class TestAPI(unittest.TestCase):
@@ -35,5 +36,21 @@ class TestValidations(unittest.TestCase):
 		self.assertEqual(length_equals([1,2,3], 3), True)
 		self.assertEqual(length_equals("", 3), False)
 
+class TestFilters(unittest.TestCase):
+	def test_filters_work(self):
+		filters = "city=Chicago"
+		h1 = {'id': 1, 'name': 'Hospital 1', 'city': 'Chicago', 'state': 'IL', 'address': None}
+		h2 = {'id': 2, 'name': 'Hospital 2', 'city': 'Rockford', 'state': 'IL', 'address': None}
+
+		self.assertEqual(app.filter(Hospital(), [h1, h2], filters), [h1])
+
+class TestCast(unittest.TestCase):
+	def test_cast_works(self):
+		data = (1, 'Hospital 1','Chicago', 'IL', None)
+		resource = Hospital()
+		expected = {'id': 1, 'name': 'Hospital 1', 'city': 'Chicago', 'state': 'IL', 'address': None}
+
+		self.assertEqual(resource.cast(data), expected)
+		
 if __name__ == '__main__':
     unittest.main()
