@@ -16,4 +16,4 @@ def execute(query, method):
 	cursor.close()
 	conn.close()
 	
-	return "{}\n".format(result)
+	return result

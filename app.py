@@ -15,13 +15,21 @@ def index():
 def get_all(resource):
 	resource = resource_from_registry(resource)
 
-	return resource.get()
+	result = resource.get()
+
+	# filters = request.args.get('filter')
+
+	# filter(resource, result, filters)
+
+	return build_response(200, result)
 
 @app.route("/<resource>/<id>", methods=["GET"])
 def get_one(resource, id):
 	resource = resource_from_registry(resource)
 
-	return resource.get(id)
+	result =  resource.get(id)
+
+	return build_response(200, result)
 
 @app.route("/<resource>", methods=["POST"])
 def post(resource):
@@ -30,7 +38,9 @@ def post(resource):
 
 	validate(resource, data)
 
-	return resource.post(data)
+	result = resource.post(data)
+
+	return build_response(201, result)
 
 @app.route("/<resource>/<id>", methods=["PUT"])
 def put(resource, id):
@@ -42,21 +52,25 @@ def put(resource, id):
 
 	validate(resource, data)
 
-	return resource.put(id, data)
+	result =  resource.put(id, data)
+
+	return build_response(202, result)
 
 @app.route("/<resource>/<id>", methods=["DELETE"])
 def delete(resource, id):
 	resource = resource_from_registry(resource)
 
-	return resource.delete(id)
+	result =  resource.delete(id)
+
+	return build_response(202, result)
 
 @app.errorhandler(404)
 def not_found(error):
-	return build_error_response(404, error.description)
+	return build_response(404, error.description)
 
 @app.errorhandler(400)
 def bad_request(error):
-	return build_error_response(400, error.description)
+	return build_response(400, error.description)
 
 def resource_from_registry(resource):
 	if resource not in registry: 
@@ -67,12 +81,31 @@ def validate(resource, data):
 	"""Run validations for resource on provided data"""
 	failed_validation = resource.validate(data)
 	
-	if failed_validation: fabort(400, failed_validation)
+	if failed_validation: abort(400, failed_validation)
 
-def build_error_response(code, description):
+# def filter(resource, data, input_filters):
+# 	try:
+# 		filters = parse_filters(filters)
+# 		print filters
+
+# 		resource.filter(data, filters)
+# 	except:
+# 		abort(400, "Filters in URL not formatted properly: {}".format(input_filters))
+
+def build_response(code, message):
 	response = {
 		'code': code,
-		'description': description
+		'message': "{}".format(message)
 	}
 
 	return jsonify(response)
+
+# def parse_filters(filters):
+# 	filters = filters.split(",")
+# 	result = {}
+
+# 	for f in filters:
+# 		f = f.split("=")
+# 		result[f[0]] = f[1]
+
+# 	return result

@@ -71,3 +71,13 @@ class Hospital:
 				if failed_validation: return failed_validation
 		return None
 
+	# def filter(self, result, filters):
+	# 	"""Filter data based on filters
+	# 	@param result(dict): input data, map of attribute name to value
+	# 	@param filters(dict): map from attribute name to filter value
+	# 	@return()
+	# 	"""
+
+	# 	fields = [attr for attr in self.attributes() if attr in result]
+
+	# 	return[ for f in fields if filters[f] == data[f]]

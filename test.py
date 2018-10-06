@@ -1,6 +1,8 @@
 import unittest
 import app
+
 from attribute import Attribute
+from validations import length_equals
 from werkzeug.exceptions import HTTPException, NotFound
 
 class TestAPI(unittest.TestCase):
@@ -27,6 +29,11 @@ class TestValidations(unittest.TestCase):
 		result = attribute.validate(2)
 
 		self.assertEqual(result, "field: Validation failed for function less_than with args: [2]")
+
+	def test_length_equals(self):
+		self.assertEqual(length_equals("foo", 3), True)
+		self.assertEqual(length_equals([1,2,3], 3), True)
+		self.assertEqual(length_equals("", 3), False)
 
 if __name__ == '__main__':
     unittest.main()
