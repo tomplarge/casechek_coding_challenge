@@ -15,13 +15,19 @@ def index():
 def get_all(resource):
 	resource = resource_from_registry(resource)
 
-	result = resource.get()
+	results = resource.get()
 
-	# filters = request.args.get('filter')
+	response = []
 
-	# filter(resource, result, filters)
+	for r in results:
+		response.append(resource.cast(r))
 
-	return build_response(200, result)
+	filters = request.args.get('filter')
+
+	if filters: 
+		response = filter(resource, response, filters)
+
+	return build_response(200, response)
 
 @app.route("/<resource>/<id>", methods=["GET"])
 def get_one(resource, id):
@@ -29,7 +35,9 @@ def get_one(resource, id):
 
 	result =  resource.get(id)
 
-	return build_response(200, result)
+	response = resource.cast(result[0])
+
+	return build_response(200, response)
 
 @app.route("/<resource>", methods=["POST"])
 def post(resource):
@@ -83,14 +91,14 @@ def validate(resource, data):
 	
 	if failed_validation: abort(400, failed_validation)
 
-# def filter(resource, data, input_filters):
-# 	try:
-# 		filters = parse_filters(filters)
-# 		print filters
+def filter(resource, results, input_filters):
+	try:
+		filters = parse_filters(input_filters)
 
-# 		resource.filter(data, filters)
-# 	except:
-# 		abort(400, "Filters in URL not formatted properly: {}".format(input_filters))
+
+		return resource.filter(results, filters)
+	except:
+		abort(400, "Filters in URL not formatted properly: {}".format(input_filters))
 
 def build_response(code, message):
 	response = {
@@ -100,12 +108,12 @@ def build_response(code, message):
 
 	return jsonify(response)
 
-# def parse_filters(filters):
-# 	filters = filters.split(",")
-# 	result = {}
+def parse_filters(filters):
+	filters = filters.split(",")
+	result = {}
 
-# 	for f in filters:
-# 		f = f.split("=")
-# 		result[f[0]] = f[1]
+	for f in filters:
+		f = f.split("=")
+		result[f[0]] = f[1]
 
-# 	return result
+	return result
