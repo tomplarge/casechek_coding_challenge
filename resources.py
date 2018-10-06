@@ -1,8 +1,15 @@
 import conn
+import validations
+from attribute import Attribute
 
 class Hospital:
 	table = "hospitals"
-	attributes = ["name", "city", "state", "address"]
+	attributes = {
+		"name": Attribute("name"),
+		"city": Attribute("city"),
+		"state": Attribute("state", validations=[(validations.length_equals, [2])]), 
+		"address": Attribute("address")
+	}
 
 	def get(self, id=None):
 		query = "SELECT * FROM {}".format(self.table)
@@ -55,3 +62,12 @@ class Hospital:
 		query = "DELETE FROM {} WHERE id = {}".format(self.table, id)
 
 		return conn.execute(query, "DELETE")
+
+	def validate(self, data):
+		for attr in self.attributes:
+			if attr in data:
+				failed_validation = self.attributes[attr].validate(data[attr])
+
+				if failed_validation: return failed_validation
+		return None
+
