@@ -1,7 +1,6 @@
 import psycopg2
 
 def execute(query, method):
-	print "EXECUTE\n\n\n"
 	conn = psycopg2.connect("dbname=postgres")
 	cursor = conn.cursor()
 	cursor.execute(query)
